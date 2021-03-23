@@ -38,8 +38,8 @@ def write_lines(output_path, lines):
 class Jbi:
 
     def intro(self):
-        lines = ["'version: "+ version]
-        lines.append("/JOB"
+        lines = ["'version: "+ VERSION]
+        lines.append("/JOB")
         name = os.path.splitext(self.input_path)[0]
         lines.append("//NAME " + name)
         lines.append("//POS")
@@ -81,7 +81,7 @@ class Jbi:
     def __init__(self, input_path):
         # time calculation monitoring
         tic = time.perf_counter()
-        print("Post Processor version: " + version)
+        print("Post Processor version: " + VERSION)
 
         self.input_path = input_path
         self.output_path = os.path.splitext(input_path)[0] + "." + FILE_EXTENSION
