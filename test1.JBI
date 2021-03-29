@@ -1,0 +1,21 @@
+'version: 0
+/JOB
+//NAME test1
+//POS
+///NPOS 48,0,0,2,0,0
+///TOOL 1
+///POSTYPE ROBOT
+///RECTAN
+///RCONF 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+//INST
+///DATE 03/29/2021 17:05
+///COMM
+///ATTR SC,RW
+///FRAME ROBOT
+///GROUP1 RB1
+NOP
+CALL JOB:DEBUT
+'Part trajectory number: 0
+CALL JOB:test1_tjr0
+CALL JOB:FIN
+END

@@ -1,6 +1,7 @@
 import time
 import os
 import os.path
+from datetime import datetime
 
 FILE_EXTENSION = "JBI"
 RAPID_SPEED = 50
@@ -17,9 +18,9 @@ class Point:
         self.k = k
 
     def write(self, number):
-        return "C" + str(number).zfill(5) + "=""{:.3f}".format(self.x) + "," + "=""{:.3f}".format(
-            self.y) + "," + "=""{:.3f}".format(self.z) \
-               + "," + "=""{:.3f}".format(self.i) + "," + "=""{:.3f}".format(self.j) + "," + "=""{:.3f}".format(self.k)
+        return "C" + str(number).zfill(5) + "=""{:.3f}".format(self.x) + ",""{:.3f}".format(
+            self.y) + ",""{:.3f}".format(self.z) \
+               + ",""{:.4f}".format(self.i) + ",""{:.4f}".format(self.j) + ",""{:.4f}".format(self.k)
 
 
 def format_points(points):
@@ -50,11 +51,28 @@ class Jbi:
         lines.append("///RCONF 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
         return lines
 
+    def pre_instruction(self, with_move):
+        lines = ["//INST"]
+        date = datetime.now()
+        text = date.strftime("%m/%d/%Y %H:%M")
+        lines.append("///DATE " + text)
+        lines.append("///COMM")
+        if with_move:
+            lines.append("///ATTR SC,RW,RJ")
+        else:
+            lines.append("///ATTR SC,RW")
+        lines.append("///FRAME ROBOT")
+        lines.append("///GROUP1 RB1")
+        lines.append("NOP")
+
+        return lines
+
     def write_trj_file(self):
         print("Writing trajectory file number: " + str(self.trj_part))
         path = os.path.splitext(self.input_path)[0] + "_tjr" + str(self.trj_part) + "." + FILE_EXTENSION
         lines = self.intro()
         lines.extend(format_points(self.points))
+        lines.extend(self.pre_instruction(True))
         lines.extend(self.trj_instructions)
         lines.append("END")
         write_lines(path, lines)
@@ -71,6 +89,7 @@ class Jbi:
         if len(self.points) > 0:
             self.write_trj_file()
         lines = self.intro()
+        lines.extend(self.pre_instruction(False))
         lines.append("CALL JOB:DEBUT")
         lines.extend(instructions)
         lines.append("CALL JOB:FIN")
@@ -150,7 +169,7 @@ class Jbi:
                 self.write_main_file(self.main_instructions)
 
         else:
-            print("no corresponding file to: " + input_path)
+            print("!!! No corresponding file to: " + input_path)
 
         # display calculation time
         toc = time.perf_counter()
