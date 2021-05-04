@@ -33,7 +33,7 @@ def format_points(points):
 def write_lines(output_path, lines):
     with open(output_path, 'w') as output_file:
         for line in lines:
-            output_file.write(line + "\n")
+            output_file.write(line + "\r\n")
 
 
 class Jbi:
