@@ -69,6 +69,7 @@ class Jbi:
         lines = self.intro_trj(len(self.points),name)
         lines.extend(format_points(self.points))
         lines.append("//INST")
+        date = datetime.now()
         text = date.strftime("%m/%d/%Y %H:%M")
         lines.append("///DATE " + text)
         lines.append("///COMM")
