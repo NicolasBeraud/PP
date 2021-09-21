@@ -1,0 +1,12 @@
+$$ first example of file for tool generation
+FEDRATE / MMPS, 10.23
+GOTO / 0, 0, 0, 0, 0, -1
+RAPID
+GOTO / 10, 10, 10, 0, 0, -1
+GOTO / 20, 20, 20, 0, 0, -1
+WAIT / 10
+TASK / 1
+ARC / ON
+GOTO / 30, 30, 30, 0, 0, -1
+ARC / OFF
+GOTO / 40, 40, 40, 0, 0, -1

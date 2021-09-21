@@ -1,0 +1,29 @@
+/JOB
+//NAME u_tourne2
+///FOLDERNAME DEMO
+//POS
+///NPOS 0,0,0,0,0,0
+///TOOL 7
+///POSTYPE ROBOT
+///RECTAN
+///RCONF 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+//INST
+///DATE 2021/02/10 13:51
+///COMM
+///ATTR SC,RW,RJ
+////FRAME USER 2
+///GROUP1 RB1
+NOP
+CALL JOB:DEBUT
+'Part trajectory number: 0
+CALL JOB:u_tourne2TRJ0
+'Part trajectory number: 1
+CALL JOB:u_tourne2TRJ1
+'Part trajectory number: 2
+CALL JOB:u_tourne2TRJ2
+'Part trajectory number: 3
+CALL JOB:u_tourne2TRJ3
+'Part trajectory number: 4
+CALL JOB:u_tourne2TRJ4
+CALL JOB:FIN
+END

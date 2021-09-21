@@ -2,6 +2,7 @@ import time
 import os
 import os.path
 import math
+from datetime import datetime
 
 FILE_EXTENSION = "JBI"
 RAPID_SPEED = 50
@@ -27,7 +28,7 @@ class Point:
             Ry = -math.degrees(math.atan(i_turn/k_turn))
         else:
             Rx = -math.degrees(math.atan2(self.j, self.k))
-            Ry = -math.degrees(math.atan(self.i/self.k))
+            Ry = math.degrees(math.atan(self.i / self.k))
 
         return "C" + str(number).zfill(5) + "=""{:.3f}".format(self.x) + "," + "{:.3f}".format(
             self.y) + "," + "{:.3f}".format(self.z) \
@@ -126,7 +127,8 @@ class Jbi:
             lines.append("///ANGLE")
             lines.extend(angles)
         lines.append("//INST")
-        lines.append("///DATE 2021/02/10 13:51")
+        now = datetime.now()  # current date and time
+        lines.append("///DATE " + now.strftime("%Y/%m/%d %H:%M") )
         lines.append("///COMM")
         lines.append("///ATTR SC,RW,RJ")
         lines.append("////FRAME USER 2")
@@ -137,7 +139,7 @@ class Jbi:
         lines.extend(self.trj_instructions)
         lines.append("END")
         write_lines(path, lines)
-
+        self.files.append(path)
         self.main_instructions.append("'Part trajectory number: " + str(self.trj_part))
         self.main_instructions.append("CALL JOB:" + os.path.splitext(path)[0])
 
@@ -164,6 +166,7 @@ class Jbi:
         lines.append("CALL JOB:FIN")
         lines.append("END")
         write_lines(self.output_path, lines)
+        self.files.append(self.output_path)
 
     def __init__(self, input_path, folder_name, with_B):
         # time calculation monitoring
@@ -176,6 +179,7 @@ class Jbi:
         self.output_path = os.path.splitext(input_path)[0] + "." + FILE_EXTENSION
         print("Input path: " + self.input_path)
         print("Output path: " + self.output_path)
+        self.files = []
 
         self.points = []
 
@@ -221,7 +225,7 @@ class Jbi:
                             if rapid:
                                 rapid = False
                             if len(self.points) > 1999:
-                                file_name = self.write_trj_file()
+                                self.write_trj_file()
 
                         elif instruction == "FEDRATE":
                             options = arguments[1].split(',')
@@ -243,7 +247,7 @@ class Jbi:
                             print("!!! Unknown instruction in line " + str(line_number) + ": " + line)
 
                 print("Writing main file")
-                self.write_main_file(self.main_instructions)
+                file_name = self.write_main_file(self.main_instructions)
 
         else:
             print("no corresponding file to: " + input_path)
