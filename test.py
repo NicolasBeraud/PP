@@ -1,6 +1,5 @@
-from jbi import Jbi
-temp = Jbi("mini.txt")
-Jbi("mini.APT")
+from Jbis import Jbi
+temp = Jbi("angle.APT", "DEMO", False)
 
 
 

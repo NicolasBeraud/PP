@@ -1,8 +1,9 @@
 /JOB
-//NAME test1
+//NAME aprem3
+///FOLDERNAME DEMO
 //POS
 ///NPOS 0,0,0,0,0,0
-///TOOL 1
+///TOOL 7
 ///POSTYPE ROBOT
 ///RECTAN
 ///RCONF 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -15,6 +16,14 @@
 NOP
 CALL JOB:DEBUT
 'Part trajectory number: 0
-CALL JOB:test1TRJ0
+CALL JOB:aprem3TRJ0
+'Part trajectory number: 1
+CALL JOB:aprem3TRJ1
+'Part trajectory number: 2
+CALL JOB:aprem3TRJ2
+'Part trajectory number: 3
+CALL JOB:aprem3TRJ3
+'Part trajectory number: 4
+CALL JOB:aprem3TRJ4
 CALL JOB:FIN
 END

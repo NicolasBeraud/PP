@@ -1,5 +1,5 @@
 /JOB
-//NAME test1
+//NAME aprem2
 //POS
 ///NPOS 0,0,0,0,0,0
 ///TOOL 1
@@ -15,6 +15,14 @@
 NOP
 CALL JOB:DEBUT
 'Part trajectory number: 0
-CALL JOB:test1TRJ0
+CALL JOB:aprem2TRJ0
+'Part trajectory number: 1
+CALL JOB:aprem2TRJ1
+'Part trajectory number: 2
+CALL JOB:aprem2TRJ2
+'Part trajectory number: 3
+CALL JOB:aprem2TRJ3
+'Part trajectory number: 4
+CALL JOB:aprem2TRJ4
 CALL JOB:FIN
 END
