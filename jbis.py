@@ -33,26 +33,42 @@ class Jbi:
             lines.append(point)
         return lines
 
-    def format_points(self, points, with_B):
+    def format_points(self, points):
         point_lines = []
         angle_lines = []
+        A = 0
+        B = 0
         for i, point in enumerate(points):
-            if with_B:
-                angle_line = self.write_angle(i, point)
+            if self.with_B or self.with_A:
+                B = self.calculate_B(point)
+            point_lines.append(self.write_point(i, point))
+            if self.with_B or self.with_A:
+                if self.with_A:
+                    A = self.calculate_A(point)
+                angle_line = self.write_angle(i, A, B)
                 angle_lines.append(angle_line)
-            point_lines.append(self.write_point(i, point, with_B))
         return point_lines, angle_lines
 
-    def write_point(self, number, point, with_B):
+    def calculate_A(self, point):
+        i_turn = point.i * math.cos(math.radians(self.previous_B)) - point.j * math.sin(math.radians(self.previous_B))
+        j_turn = point.i * math.sin(math.radians(self.previous_B)) + point.j * math.cos(math.radians(self.previous_B))
+        k_turn = point.k
+        A = math.degrees(math.atan(i_turn / k_turn))
+        return A
+
+    def write_point(self, number, point):
 
         i_turn = point.i * math.cos(math.radians(self.previous_B)) - point.j * math.sin(math.radians(self.previous_B))
         j_turn = point.i * math.sin(math.radians(self.previous_B)) + point.j * math.cos(math.radians(self.previous_B))
         k_turn = point.k
 
-        if with_B:
+        if self.with_B and not self.with_A:
             Rx = -math.degrees(math.atan2(j_turn, k_turn))
             Ry = math.degrees(math.atan(i_turn / k_turn))
-        else:
+        elif self.with_A:
+            Rx = -math.degrees(math.atan2(j_turn, k_turn))
+            Ry = math.degrees(math.atan(i_turn / k_turn))
+        else :
             Rx = -math.degrees(math.atan2(point.j, point.k))
             Ry = math.degrees(math.atan(point.i / point.k))
 
@@ -60,8 +76,9 @@ class Jbi:
             point.y) + "," + "{:.3f}".format(point.z) \
                + "," + "{:.4f}".format(Rx) + "," + "{:.4f}".format(Ry) + "," + "{:.4f}".format(-self.previous_B)
 
-    def write_angle(self, number, point):
+    def calculate_B(self, point):
         print("previous_B: " + str(self.previous_B))
+        print("initial_B: " + str(self.initial_B))
         angle = math.degrees(math.atan2(point.x, point.y)) + self.initial_B
         if angle < 0:
             angle += 360
@@ -77,8 +94,10 @@ class Jbi:
         B = self.previous_B + delta
         print(B)
         print("------------")
-        A = 0
         self.previous_B = B
+        return B
+
+    def write_angle(self, number, A, B):
         return "EC" + str(number).zfill(5) + "=""{:.4f}".format(A) + ",""{:.4f}".format(B)
 
     def intro(self, point_nb, name):
@@ -119,7 +138,7 @@ class Jbi:
         name = os.path.splitext(path)[0]
         lines = self.intro_trj(len(self.points), name)
 
-        points, angles = self.format_points(self.points, self.with_B)
+        points, angles = self.format_points(self.points)
         lines.extend(points)
 
         if self.with_B:
@@ -169,11 +188,12 @@ class Jbi:
         write_lines(self.output_path, lines)
         self.files.append(self.output_path)
 
-    def __init__(self, input_path, folder_name, with_B, initial_B=0):
+    def __init__(self, input_path, folder_name, with_B, with_A=False, initial_B=0):
         # time calculation monitoring
         tic = time.perf_counter()
 
         self.with_B = with_B
+        self.with_A = with_A
         self.folder_name = folder_name
         self.input_path = input_path
         self.initial_B = initial_B
