@@ -31,6 +31,14 @@ class JbisTest(unittest.TestCase):
             self.assertTrue(os.path.exists(name))
             self.assertTrue(compare(name, "result/" + name))
 
+    def test_tourne_dep_x(self):
+        file = Jbi("u_tourne3.APT", "DEMO", True, 90)
+        print(file.files)
+        for name in file.files:
+            print(name)
+            self.assertTrue(os.path.exists(name))
+            self.assertTrue(compare(name, "result/" + name))
+
     def test_tourne_no_rotaion(self):
         file = Jbi("u_tourne2.APT", "DEMO", False)
         print(file.files)

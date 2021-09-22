@@ -17,60 +17,6 @@ class Point:
         self.j = j
         self.k = k
 
-    def write(self, number, previous_angle, with_B):
-
-        i_turn = self.i * math.cos(math.radians(previous_angle)) - self.j * math.sin(math.radians(previous_angle))
-        j_turn = self.i * math.sin(math.radians(previous_angle)) + self.j * math.cos(math.radians(previous_angle))
-        k_turn = self.k
-
-        if with_B:
-            Rx = -math.degrees(math.atan2(j_turn, k_turn))
-            Ry = -math.degrees(math.atan(i_turn/k_turn))
-        else:
-            Rx = -math.degrees(math.atan2(self.j, self.k))
-            Ry = math.degrees(math.atan(self.i / self.k))
-
-        return "C" + str(number).zfill(5) + "=""{:.3f}".format(self.x) + "," + "{:.3f}".format(
-            self.y) + "," + "{:.3f}".format(self.z) \
-               + "," + "{:.4f}".format(Rx) + "," + "{:.4f}".format(Ry) + "," + "{:.4f}".format(-previous_angle)
-
-    def write_angle(self, number, previous_angle):
-        angle = math.degrees(math.atan2(self.x, self.y))
-        if angle < 0:
-            angle += 360
-        print(angle)
-        previous_short_angle = previous_angle % 360
-
-        print(previous_short_angle)
-        delta = angle - previous_short_angle
-        if delta < -180:
-            delta += 360
-        print(delta)
-
-        B = previous_angle + delta
-        print(B)
-        print("------------")
-        A = 0
-        return "EC" + str(number).zfill(5) + "=""{:.4f}".format(A) + ",""{:.4f}".format(B), B
-
-def format_angles(points, previous_angle):
-    lines = []
-    for i, point in enumerate(points):
-        point, previous_angle = point.write_angle(i, previous_angle)
-        lines.append(point)
-    return lines, previous_angle
-
-
-def format_points(points, previous_angle, with_B):
-    point_lines = []
-    angle_lines = []
-    for i, point in enumerate(points):
-        if with_B:
-            angle_line, previous_angle = point.write_angle(i, previous_angle)
-            angle_lines.append(angle_line)
-        point_lines.append(point.write(i, previous_angle, with_B))
-    return point_lines, angle_lines, previous_angle
-
 
 def write_lines(output_path, lines):
     with open(output_path, 'w') as output_file:
@@ -80,9 +26,64 @@ def write_lines(output_path, lines):
 
 class Jbi:
 
+    def format_angles(self, points):
+        lines = []
+        for i, point in enumerate(points):
+            point, self.previous_B = point.write_angle(i)
+            lines.append(point)
+        return lines
+
+    def format_points(self, points, with_B):
+        point_lines = []
+        angle_lines = []
+        for i, point in enumerate(points):
+            if with_B:
+                angle_line = self.write_angle(i, point)
+                angle_lines.append(angle_line)
+            point_lines.append(self.write_point(i, point, with_B))
+        return point_lines, angle_lines
+
+    def write_point(self, number, point, with_B):
+
+        i_turn = point.i * math.cos(math.radians(self.previous_B)) - point.j * math.sin(math.radians(self.previous_B))
+        j_turn = point.i * math.sin(math.radians(self.previous_B)) + point.j * math.cos(math.radians(self.previous_B))
+        k_turn = point.k
+
+        if with_B:
+            Rx = -math.degrees(math.atan2(j_turn, k_turn))
+            Ry = math.degrees(math.atan(i_turn / k_turn))
+        else:
+            Rx = -math.degrees(math.atan2(point.j, point.k))
+            Ry = math.degrees(math.atan(point.i / point.k))
+
+        return "C" + str(number).zfill(5) + "=""{:.3f}".format(point.x) + "," + "{:.3f}".format(
+            point.y) + "," + "{:.3f}".format(point.z) \
+               + "," + "{:.4f}".format(Rx) + "," + "{:.4f}".format(Ry) + "," + "{:.4f}".format(-self.previous_B)
+
+    def write_angle(self, number, point):
+        print("previous_B: " + str(self.previous_B))
+        angle = math.degrees(math.atan2(point.x, point.y)) + self.initial_B
+        if angle < 0:
+            angle += 360
+        print(angle)
+        previous_short_angle = self.previous_B % 360
+
+        print(previous_short_angle)
+        delta = angle - previous_short_angle
+        print("initial delta: " + str(delta))
+        if delta < -180:
+            delta += 360
+        print(delta)
+        B = self.previous_B + delta
+        print(B)
+        print("------------")
+        A = 0
+        self.previous_B = B
+        return "EC" + str(number).zfill(5) + "=""{:.4f}".format(A) + ",""{:.4f}".format(B)
+
     def intro(self, point_nb, name):
         lines = ["/JOB"]
-        
+
         lines.append("//NAME " + name)
         lines.append("///FOLDERNAME " + self.folder_name)
         lines.append("//POS")
@@ -95,15 +96,15 @@ class Jbi:
         lines.append("///RECTAN")
         lines.append("///RCONF 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
         return lines
-    
+
     def intro_trj(self, point_nb, name):
         lines = ["/JOB"]
-        
+
         lines.append("//NAME " + name)
         lines.append("///FOLDERNAME " + self.folder_name)
         lines.append("//POS")
         if self.with_B:
-            lines.append("///NPOS "+ str(point_nb)+",0,"+ str(point_nb)+",0,0,0")
+            lines.append("///NPOS " + str(point_nb) + ",0," + str(point_nb) + ",0,0,0")
         else:
             lines.append("///NPOS " + str(point_nb) + ",0,0,0,0,0")
         lines.append("///USER 2")
@@ -118,17 +119,17 @@ class Jbi:
         name = os.path.splitext(path)[0]
         lines = self.intro_trj(len(self.points), name)
 
-        points, angles, self.previous_angle = format_points(self.points, self.previous_angle, self.with_B)
+        points, angles = self.format_points(self.points, self.with_B)
         lines.extend(points)
 
         if self.with_B:
-            lines.append("///TOOL 0") # outil de la main gauche
+            lines.append("///TOOL 0")  # outil de la main gauche
             lines.append("///POSTYPE ANGLE")
             lines.append("///ANGLE")
             lines.extend(angles)
         lines.append("//INST")
         now = datetime.now()  # current date and time
-        lines.append("///DATE " + now.strftime("%Y/%m/%d %H:%M") )
+        lines.append("///DATE " + now.strftime("%Y/%m/%d %H:%M"))
         lines.append("///COMM")
         lines.append("///ATTR SC,RW,RJ")
         lines.append("////FRAME USER 2")
@@ -168,14 +169,15 @@ class Jbi:
         write_lines(self.output_path, lines)
         self.files.append(self.output_path)
 
-    def __init__(self, input_path, folder_name, with_B):
+    def __init__(self, input_path, folder_name, with_B, initial_B=0):
         # time calculation monitoring
         tic = time.perf_counter()
 
         self.with_B = with_B
         self.folder_name = folder_name
         self.input_path = input_path
-        self.previous_angle = 0
+        self.initial_B = initial_B
+        self.previous_B = 0
         self.output_path = os.path.splitext(input_path)[0] + "." + FILE_EXTENSION
         print("Input path: " + self.input_path)
         print("Output path: " + self.output_path)
@@ -195,7 +197,7 @@ class Jbi:
                     line = line.rstrip()
                     if len(line) == 0:
                         print("Empty line")
-                        
+
                     elif line[0] == "$" and line[1] == "$":
                         self.trj_instructions.append("'" + line[2:])
                     else:
@@ -218,8 +220,8 @@ class Jbi:
                                 Point(float(coordinates[0]), float(coordinates[1]), float(coordinates[2]),
                                       float(coordinates[3]), float(coordinates[4]), float(coordinates[5])))
                             if self.with_B:
-                                self.trj_instructions.append("SMOVL C" + str(len(self.points)-1).zfill(5)
-                                                             +" +MOVJ EC" + str(len(self.points)-1).zfill(5))
+                                self.trj_instructions.append("SMOVL C" + str(len(self.points) - 1).zfill(5)
+                                                             + " +MOVJ EC" + str(len(self.points) - 1).zfill(5))
                             else:
                                 self.trj_instructions.append("MOVL C" + str(len(self.points) - 1).zfill(5))
                             if rapid:
@@ -247,7 +249,7 @@ class Jbi:
                             print("!!! Unknown instruction in line " + str(line_number) + ": " + line)
 
                 print("Writing main file")
-                file_name = self.write_main_file(self.main_instructions)
+                self.write_main_file(self.main_instructions)
 
         else:
             print("no corresponding file to: " + input_path)
