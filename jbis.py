@@ -51,7 +51,6 @@ class Jbi:
 
     def calculate_A(self, point):
         i_turn = point.i * math.cos(math.radians(self.previous_B)) - point.j * math.sin(math.radians(self.previous_B))
-        j_turn = point.i * math.sin(math.radians(self.previous_B)) + point.j * math.cos(math.radians(self.previous_B))
         k_turn = point.k
         A = math.degrees(math.atan(i_turn / k_turn))
         return A
@@ -68,7 +67,7 @@ class Jbi:
         elif self.with_A:
             Rx = -math.degrees(math.atan2(j_turn, k_turn))
             Ry = math.degrees(math.atan(i_turn / k_turn))
-        else :
+        else:
             Rx = -math.degrees(math.atan2(point.j, point.k))
             Ry = math.degrees(math.atan(point.i / point.k))
 
@@ -77,23 +76,15 @@ class Jbi:
                + "," + "{:.4f}".format(Rx) + "," + "{:.4f}".format(Ry) + "," + "{:.4f}".format(-self.previous_B)
 
     def calculate_B(self, point):
-        print("previous_B: " + str(self.previous_B))
-        print("initial_B: " + str(self.initial_B))
         angle = math.degrees(math.atan2(point.x, point.y)) + self.initial_B
         if angle < 0:
             angle += 360
-        print(angle)
         previous_short_angle = self.previous_B % 360
 
-        print(previous_short_angle)
         delta = angle - previous_short_angle
-        print("initial delta: " + str(delta))
         if delta < -180:
             delta += 360
-        print(delta)
         B = self.previous_B + delta
-        print(B)
-        print("------------")
         self.previous_B = B
         return B
 
