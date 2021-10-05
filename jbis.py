@@ -253,7 +253,7 @@ class Jbi:
                             if len(self.points) > 1999:
                                 self.write_trj_file()
 
-                        elif instruction == "FEDRATE":
+                        elif instruction == "FEEDRATE":
                             options = arguments[1].split(',')
                             if options[0] != "MMPS":
                                 print("!!! Unknown unit for instruction FEDRATE in line " + str(
