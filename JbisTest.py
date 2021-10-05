@@ -1,5 +1,5 @@
 import unittest
-from Jbis import Jbi
+from jbis import Jbi
 from Jbis_compare import compare
 import os.path
 

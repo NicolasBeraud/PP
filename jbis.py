@@ -3,9 +3,12 @@ import os
 import os.path
 import math
 from datetime import datetime
+from sys import platform
 
 FILE_EXTENSION = "JBI"
 RAPID_SPEED = 50
+
+END_OF_LINE = ''
 
 
 class Point:
@@ -18,10 +21,19 @@ class Point:
         self.k = k
 
 
+def define_eol():
+    global END_OF_LINE
+    if platform == "linux" or platform == "linux2":
+        END_OF_LINE = '\r\n'
+    elif platform == "darwin":
+        print("!!!! no yet implemented !!!!")
+    elif platform == "win32":
+        END_OF_LINE = '\n'
+
 def write_lines(output_path, lines):
     with open(output_path, 'w') as output_file:
         for line in lines:
-            output_file.write(line + "\n")
+            output_file.write(line + END_OF_LINE)
 
 
 class Jbi:
@@ -182,6 +194,7 @@ class Jbi:
     def __init__(self, input_path, folder_name, with_B, with_A=False, initial_B=0):
         # time calculation monitoring
         tic = time.perf_counter()
+        define_eol()
 
         self.with_B = with_B
         self.with_A = with_A
