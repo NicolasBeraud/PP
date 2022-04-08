@@ -139,7 +139,7 @@ class Jbi:
 
     def write_trj_file(self):
         path = self.output_path + "TRJ" + str(self.trj_part) + "." + FILE_EXTENSION
-        name = os.path.splitext(path)[0]
+        name = os.path.splitext(os.path.basename(path))[0]
         lines = self.intro_trj(len(self.points), name)
 
         points, angles = self.format_points(self.points)
@@ -174,7 +174,7 @@ class Jbi:
     def write_main_file(self, instructions):
         if len(self.points) > 0:
             self.write_trj_file()
-        name = self.output_path
+        name = os.path.basename(self.output_path)
         lines = self.intro(0, name)
         lines.append("//INST")
         lines.append("///DATE 2021/02/10 13:51")
@@ -189,8 +189,8 @@ class Jbi:
         lines.extend(instructions)
         lines.append("CALL JOB:FIN")
         lines.append("END")
-        write_lines(self.output_path, lines)
         path = self.output_path + "." + FILE_EXTENSION
+        write_lines(path, lines)
         self.files.append(path)
 
     def __init__(self, folder_name, with_B, with_A=False, initial_B=0, lines=None, output_path="", input_path=""):
