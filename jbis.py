@@ -165,7 +165,7 @@ class Jbi:
         write_lines(path, lines)
         self.files.append(path)
         self.main_instructions.append("'Part trajectory number: " + str(self.trj_part))
-        self.main_instructions.append("CALL JOB:" + os.path.splitext(path)[0])
+        self.main_instructions.append("CALL JOB:" + os.path.basename(os.path.splitext(path)[0]))
 
         self.points = []
         self.trj_instructions = []
