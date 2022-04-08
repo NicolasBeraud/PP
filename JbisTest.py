@@ -7,7 +7,7 @@ import os.path
 class JbisTest(unittest.TestCase):
 
     def test_no_rotation(self):
-        file = Jbi("u_angle.APT", "DEMO", False)
+        file = Jbi("DEMO", False, input_path="u_angle.APT")
         print(file.files)
         for name in file.files:
             print(name)
@@ -24,7 +24,7 @@ class JbisTest(unittest.TestCase):
        #     self.assertTrue(compare(name, "result/" + name))
 
     def test_tourne(self):
-        file = Jbi("u_tourne.APT", "DEMO", True)
+        file = Jbi("DEMO", True, input_path="u_tourne.APT")
         print(file.files)
         for name in file.files:
             print(name)
@@ -32,7 +32,7 @@ class JbisTest(unittest.TestCase):
             self.assertTrue(compare(name, "result/" + name))
 
     def test_tourne_dep_x(self):
-        file = Jbi("u_tourne3.APT", "DEMO", True, False, 90)
+        file = Jbi("DEMO", True, with_A=False, initial_B=90, input_path="u_tourne3.APT")
         print(file.files)
         for name in file.files:
             print(name)
@@ -40,7 +40,7 @@ class JbisTest(unittest.TestCase):
             self.assertTrue(compare(name, "result/" + name))
 
     def test_tourne_no_rotaion(self):
-        file = Jbi("u_tourne2.APT", "DEMO", False)
+        file = Jbi("DEMO", False, input_path="u_tourne2.APT")
         print(file.files)
         for name in file.files:
             print(name)
@@ -48,7 +48,7 @@ class JbisTest(unittest.TestCase):
             self.assertTrue(compare(name, "result/" + name))
 
     def test_tourne_AB(self):
-        file = Jbi("u_tourne4.APT", "DEMO", True, True, 90)
+        file = Jbi("DEMO", True, with_A=True, initial_B=90, input_path="u_tourne4.APT")
         print(file.files)
         for name in file.files:
             print(name)
@@ -69,7 +69,7 @@ class JbisTest(unittest.TestCase):
 
 
     def classic_test(self, file_name: str, with_A, with_B, default_angle):
-        file = Jbi(file_name, "DEMO", with_A, with_B, default_angle)
+        file = Jbi("DEMO", with_A, with_A=with_B, initial_B=default_angle, input_path=file_name)
         print(file.files)
         for name in file.files:
             print(name)
